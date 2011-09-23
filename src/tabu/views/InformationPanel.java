@@ -9,6 +9,7 @@ import java.awt.GridLayout;
 import javax.swing.JPanel;
 import tabu.models.ObservableList;
 import tabu.models.Player;
+import tabu.models.Team;
 
 /**
  * This panel displays information about registered teams, players and question
@@ -17,12 +18,23 @@ import tabu.models.Player;
  */
 public class InformationPanel extends JPanel{
 
-    private ListEditorPanel<Player> playersEditor;
+    private ListEditor<Player> playersEditor;
+    private ListEditor<Team> teamsEditor;
 
-    public InformationPanel(MainView controller, ObservableList<Player> players){
-        super(new GridLayout(0,3));
-        playersEditor = new ListEditorPanel<Player>(
+    public InformationPanel(
+            MainView controller,
+            ObservableList<Player> players,
+            ObservableList<Team> teams)
+    {
+        super(new GridLayout(0,3,5,0));
+
+        playersEditor = new ListEditor<Player>(
                 players, new PlayerEditor(), "Players");
+        teamsEditor = new ListEditor<Team>(
+                teams, new TeamEditor(players), "Teams");
+
+
         this.add(playersEditor);
+        this.add(teamsEditor);
     }
 }

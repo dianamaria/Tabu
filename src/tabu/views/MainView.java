@@ -10,6 +10,7 @@ import java.awt.Dimension;
 import javax.swing.*;
 import tabu.models.ObservableList;
 import tabu.models.Player;
+import tabu.models.Team;
 
 /**
  *
@@ -28,7 +29,7 @@ public class MainView extends JFrame{
   
     // logic
     private ObservableList<Player> players = new ObservableList<Player>();
-
+    private ObservableList<Team> teams = new ObservableList<Team>();
 
     public MainView(){
         this.setPreferredSize(new Dimension(800,600));
@@ -37,7 +38,7 @@ public class MainView extends JFrame{
         mainMenu.setController(this);
 
         this.setContentPane(content);
-        informationPanel = new InformationPanel(this, players);
+        informationPanel = new InformationPanel(this, players, teams);
         content.add(informationPanel, INFORMATION);
         
 
