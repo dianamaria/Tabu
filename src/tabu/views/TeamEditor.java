@@ -6,14 +6,26 @@
 package tabu.views;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.*;
+import tabu.events.ModelChangeEvent;
 import tabu.models.*;
-class TeamEditorDialog extends JDialog{
+
+
+class TeamEditorDialog extends JDialog implements 
+     ActionListener,
+     ModelChangeListener
+{
+
+    public static final int EXIT_OK = 1;
+    public static final int EXIT_ABORT = 2;
 
     private Team team;
     private ObservableList<Player> players;
+    private int exitStatus = EXIT_ABORT;
 
     private ListEditor<Player> playersEditor;
     private JPanel content = new JPanel(new BorderLayout());
@@ -30,12 +42,12 @@ class TeamEditorDialog extends JDialog{
 
     public TeamEditorDialog(Team editTeam, ObservableList<Player> players_list){
         this.players = players_list;
+        players.addListener(this);
         playersEditor = new ListEditor<Player>(
                 players, new PlayerEditor(), "Players");
-        
-        // make sure that edited team is not null
-        if(editTeam == null)
-            editTeam = new Team("unnamed");
+
+        nameEdit.setText(editTeam.getName());
+        setTeam(editTeam);
 
         // visual
         this.setModal(true);
@@ -63,25 +75,81 @@ class TeamEditorDialog extends JDialog{
         teamButtonsPanel.add(addToTeam);
         teamButtonsPanel.add(removeFromTeam);
 
+        addToTeam.addActionListener(this);
+        removeFromTeam.addActionListener(this);
+        confirmButton.addActionListener(this);
+
         this.pack();
 
         this.addWindowListener(
             new WindowAdapter() {
                 @Override
                 public void windowClosing(WindowEvent ev){
-                    clean();
+                    finalOperations();
                 }
             }
         );
 
     }
 
-    private void clean(){
+    private void setTeam(Team t){
+        team = t;
+        DefaultListModel model = new DefaultListModel();
+        for(Player p : team){
+            model.addElement(p);
+        }
+        teamMembers.setModel(model);
+    }
+
+    private void finalOperations(){
          players.removeListener(playersEditor);
+         players.removeListener(this);
+         team.setName(nameEdit.getText());
+         System.out.println("finalized");
+    }
+
+    private void addToTeamAction(){
+        Player toAdd = playersEditor.getSelectedObject();
+        if(toAdd == null)
+            return;
+        
+        if(team.addPlayer(toAdd))
+            setTeam(team);
+    }
+
+    private void removeFromTeamAction(){
+        Player toRemove = (Player) teamMembers.getSelectedValue();
+        team.removePlayer(toRemove);
+        setTeam(team);
+
+    }
+
+    private void confirm(){
+        exitStatus = EXIT_OK;
+        finalOperations();
+        this.dispose();
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        if(e.getSource() == addToTeam)
+            addToTeamAction();
+        else if(e.getSource() == removeFromTeam)
+            removeFromTeamAction();
+        else if(e.getSource() == confirmButton)
+            confirm();
+    }
+
+    public void modelChanged(ModelChangeEvent event) {
+        setTeam(team);
+    }
+
+    public int getExitStatus() {
+        return exitStatus;
     }
 
 
 }
+
 
 /**
  *
@@ -96,14 +164,18 @@ public class TeamEditor implements Editor<Team>{
     }
 
     public Team newItem() {
-        TeamEditorDialog ted = new TeamEditorDialog(null, players);
+        Team newTeam = new Team("Unnamed");
+        TeamEditorDialog ted = new TeamEditorDialog(newTeam, players);
         ted.setVisible(true);
-        System.out.println("yes");
-        return null;
+        if(ted.getExitStatus() == TeamEditorDialog.EXIT_OK)
+            return newTeam;
+        else
+            return null;
     }
 
     public void edit(Team item) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        TeamEditorDialog ted = new TeamEditorDialog(item, players);
+        ted.setVisible(true);
     }
 
     public boolean sureDelete(Team item) {
