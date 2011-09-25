@@ -5,17 +5,15 @@
 
 package tabu.models;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
-import json.JSONArray;
-import json.JSONException;
-import json.JSONObject;
 
 /**
  *
  * @author krzychu
  */
-public class Team implements Iterable<Player>, JSONSerializable{
+public class Team implements Iterable<Player>, Serializable{
     private String name;
     private LinkedList<Player> players = new LinkedList<Player>();
 
@@ -58,33 +56,11 @@ public class Team implements Iterable<Player>, JSONSerializable{
         return (Player[]) players.toArray();
     }
 
-    public JSONObject dump() throws JSONException {
-        JSONObject result = new JSONObject();
-        result.put("name", name);
-        JSONArray players_arr = new JSONArray();
-        for(Player p : this){
-            players_arr.put(p.getName());
-        }
-        result.put("players", players_arr);
-        return result;
-    }
-
     private Player findByName(ObservableList<Player> ps, String playerName){
         for(Player p : ps){
             if(p.getName().equals(playerName))
                 return p;
         }
         return null;
-    }
-
-    public void load(JSONObject obj, Object context) throws JSONException {
-        ObservableList<Player> allPlayers = (ObservableList<Player>) context;
-        name = obj.getString("name");
-        JSONArray players_arr = obj.getJSONArray("players");
-        players.clear();
-        for(int i=0; i<players_arr.length() ; i++){
-            String playerName = players_arr.getString(i);
-            players.add(findByName(allPlayers, playerName));
-        }
     }
 }

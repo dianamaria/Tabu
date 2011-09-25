@@ -13,7 +13,8 @@ import tabu.events.ModelChangeEvent;
  * @author krzychu
  */
 public abstract class ObservableModel {
-    private LinkedList<ModelChangeListener> listeners = new LinkedList< ModelChangeListener>();
+    private transient LinkedList<ModelChangeListener> listeners =
+            new LinkedList< ModelChangeListener>();
 
     public void addModelChangeListener(ModelChangeListener listener){
         listeners.add(listener);

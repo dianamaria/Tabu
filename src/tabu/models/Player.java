@@ -5,14 +5,13 @@
 
 package tabu.models;
 
-import json.JSONException;
-import json.JSONObject;
+import java.io.Serializable;
 
 /**
  *
  * @author krzychu
  */
-public class Player implements JSONSerializable{
+public class Player implements Serializable{
     private String name;
 
     public Player(String name) {
@@ -25,16 +24,6 @@ public class Player implements JSONSerializable{
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public JSONObject dump() throws JSONException{
-        JSONObject result = new JSONObject();
-        result.put("name", name);
-        return result;
-    }
-
-    public void load(JSONObject obj, Object context) throws JSONException{
-        name = obj.getString("name");
     }
 
     @Override

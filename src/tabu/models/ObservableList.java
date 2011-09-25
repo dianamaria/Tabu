@@ -5,11 +5,9 @@
 
 package tabu.models;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
-import json.JSONArray;
-import json.JSONException;
-import json.JSONObject;
 import tabu.events.ModelChangeEvent;
 
 
@@ -17,8 +15,8 @@ import tabu.events.ModelChangeEvent;
  *
  * @author krzychu
  */
-public class ObservableList<T extends JSONSerializable> extends ObservableModel
-        implements Iterable<T>, JSONSerializable
+public class ObservableList<T> extends ObservableModel
+        implements Iterable<T>, Serializable
 {
     private LinkedList<T> items = new LinkedList<T>();
 
@@ -48,20 +46,4 @@ public class ObservableList<T extends JSONSerializable> extends ObservableModel
         return items.iterator();
     }
 
-    public JSONObject dump() throws JSONException {
-        JSONObject result = new JSONObject();
-        JSONArray a = new JSONArray();
-        for(T i : items){
-            a.put(i.dump());
-        }
-        result.put("items", a);
-        return result;
-    }
-
-    public void load(JSONObject obj, Object context) throws JSONException {
-        JSONArray arr = obj.getJSONArray("items");
-        for(int i=0; i<arr.length(); i++){
-            
-        }
-    }
 }

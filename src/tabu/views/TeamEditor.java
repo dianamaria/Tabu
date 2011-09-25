@@ -105,7 +105,6 @@ class TeamEditorDialog extends JDialog implements
          players.removeModelChangeListener(playersEditor);
          players.removeModelChangeListener(this);
          team.setName(nameEdit.getText());
-         System.out.println("finalized");
     }
 
     private void addToTeamAction(){
