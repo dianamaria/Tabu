@@ -16,6 +16,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import tabu.events.ModelChangeEvent;
 import tabu.models.Editor;
+import tabu.models.JSONSerializable;
 import tabu.models.ModelChangeListener;
 import tabu.models.ObservableList;
 
@@ -23,7 +24,7 @@ import tabu.models.ObservableList;
  *
  * @author krzychu
  */
-public class ListEditor<T> extends JPanel implements
+public class ListEditor<T extends JSONSerializable> extends JPanel implements
         ModelChangeListener,
         ActionListener
 {
@@ -46,7 +47,7 @@ public class ListEditor<T> extends JPanel implements
         super(new BorderLayout());
 
         this.list = list;
-        list.addListener(this);
+        list.addModelChangeListener(this);
         this.editor = editor;
 
         // create list view

@@ -42,7 +42,7 @@ class TeamEditorDialog extends JDialog implements
 
     public TeamEditorDialog(Team editTeam, ObservableList<Player> players_list){
         this.players = players_list;
-        players.addListener(this);
+        players.addModelChangeListener(this);
         playersEditor = new ListEditor<Player>(
                 players, new PlayerEditor(), "Players");
 
@@ -102,8 +102,8 @@ class TeamEditorDialog extends JDialog implements
     }
 
     private void finalOperations(){
-         players.removeListener(playersEditor);
-         players.removeListener(this);
+         players.removeModelChangeListener(playersEditor);
+         players.removeModelChangeListener(this);
          team.setName(nameEdit.getText());
          System.out.println("finalized");
     }
